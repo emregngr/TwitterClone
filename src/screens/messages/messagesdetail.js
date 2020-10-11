@@ -105,9 +105,9 @@ const MessageStyle = {
 
 
 
-const mapStateToProps = ({ authResponse, messagesResponse }) => {
+const mapStateToProps = ({ authResponse, messageResponse }) => {
     const { user } = authResponse;
-    return { user, all_messages: messagesResponse.getMessages };
+    return { user, all_messages: messageResponse.getMessages };
 };
 
 export default connect(mapStateToProps, { getMessages, addMessages })(MessageDetail);

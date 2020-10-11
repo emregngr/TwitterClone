@@ -7,7 +7,10 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import auth from '@react-native-firebase/auth';
 
+
 import { AuthContext } from './context'
+
+
 
 import Login from './screens/auth/login'
 import Register from './screens/auth/register'
@@ -18,16 +21,22 @@ import HomeDetail from './screens/home/homedetail'
 import SearchScreen from './screens/search/search'
 import SearchDetail from './screens/search/searchdetail'
 
+
 import NotificationsScreen from './screens/notifications/notifications'
 import NotificationsDetail from './screens/notifications/notificationsdetail'
 
+
+
 import MessagesScreen from './screens/messages/messages'
-import MessageDetail from './screens/messages/messagesdetail'
+import MessageDetail from './screens/messages/messageDetail'
 import GetUsers from './screens/messages/getusers'
+
 
 import Menu from './screens/menu/menu'
 
+
 import AddTweet from './screens/tweets/addtweet'
+
 
 import { navigationRef } from './rootnavigation';
 import AsyncStorage from '@react-native-community/async-storage';

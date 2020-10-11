@@ -1,88 +1,169 @@
-import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, Image } from 'react-native';
-import { Icon } from 'native-base';
+import React, { useState, useRef, useEffect } from 'react';
+import { Text, View, SafeAreaView, Animated, Keyboard, Image } from 'react-native';
+import ImagePicker from 'react-native-image-picker';
+import { Button, Input } from '../../components';
 import { colors } from '../../style';
+import { Icon } from 'native-base';
+import { addTweet } from '../../actions'
+
 import { connect } from 'react-redux';
 
-const TweetItems = (props) => {
+const AddTweet = (props) => {
 
+    const [tweet, setTweet] = useState('')
+    const [image, setImage] = useState(null)
 
-    const iconSection = (isText, name, value, onPress) => {
-        let isActive;
-        name == 'comment' ?
-            isActive = value.filter((data) => data.uid == props.user.uid) :
-            isActive = value.filter((uid) => uid == props.user.uid)
+    const animation = useRef(new Animated.Value(0)).current;
 
-        return (
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Icon
-                    type='FontAwesome'
-                    name={name}
-                    style={{ fontSize: 18, color: isActive.length > 0 ? name == 'heart' ? 'red' : 'green' : 'gray' }}
-                    onPress={onPress}
-                />
-                {isText ? <Text style={{ fontSize: 12, marginLeft: 5 }}>{value.length}</Text> : null}
-            </View>
-        )
+    useEffect(() => {
+        Keyboard.addListener("keyboardWillShow", _keyboardWillShow);
+        Keyboard.addListener("keyboardWillHide", _keyboardWillHide);
+
+        return () => {
+            Keyboard.removeListener("keyboardWillShow", _keyboardWillShow);
+            Keyboard.removeListener("keyboardWillHide", _keyboardWillHide);
+        };
+
+    }, []);
+
+    const _keyboardWillShow = (e) => {
+        const height = e.endCoordinates.height
+        Animated.timing(animation, {
+            toValue: -height + 34,
+            duration: 300
+        }).start();
+    };
+
+    const _keyboardWillHide = (e) => {
+        Animated.timing(animation, {
+            toValue: 0,
+            duration: 300
+        }).start();
+    };
+
+    console.log('Gelen: ', props.user.username);
+
+    const selectImage = () => {
+
+        const options = {
+            title: 'Profil Fotoğrafı Seçiniz',
+            quality: 0.2,
+            takePhotoButtonTitle: 'Resim Çek',
+            chooseFromLibraryButtonTitle: 'Galeriden Seç',
+            cancelButtonTitle: 'Kapat',
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
+
+        ImagePicker.showImagePicker(options, async (response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                const uri = response.uri;
+                setImage(uri)
+            }
+        });
+
     }
 
-
-    const { fav, retweet, comment, tweet, user, uid } = props.data;
-
-
     return (
-        <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => console.log('item click')
-            }
-            style={{ padding: 20, borderBottomWidth: 0.5, borderColor: colors.line, flexDirection: 'row' }}>
+        <SafeAreaView style={{ flex: 1 }}>
 
-            <View style={{ flex: 1.5 }}>
-                {
-                    user.profile_url ?
-                        <TouchableOpacity
-                            onPress={() => { }}>
-                            <Image
-                                source={{ uri: user.profile_url }}
-
-                                style={{ width: 40, height: 40 }}
-                                resizeMode={'cover'}
-                            />
-                        </TouchableOpacity>
-                        :
-                        <Icon name={'user-circle'} />
-                }
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10 }}>
+                <Text onPress={() => props.navigation.pop()} style={{ color: colors.main, fontSize: 14 }}>Vazgeç</Text>
+                <Button
+                    text={'Tweetle'}
+                    loading={props.loading}
+                    textStyle={{ fontSize: 14 }}
+                    onPress={() => {
+                        props.addTweet({
+                            tweet: {
+                                text: tweet,
+                                image
+                            },
+                            user: {
+                                profile_url: props.user.profile_image,
+                                name: props.user.name,
+                                username: props.user.username
+                            },
+                            fav: [],
+                            retweet: [],
+                            comment: [],
+                            createdDate: new Date()
+                        })
+                    }}
+                    style={{ width: '20%', height: 30 }}
+                />
             </View>
 
-            <View style={{ flex: 9, marginLeft: 10 }}>
-                <Text style={{ fontSize: 14, fontWeight: 'bold' }}>{user.name}<Text style={{ color: colors.line, fontWeight: '100', fontSize: 10 }}>  @{user.username} . 1 gün</Text></Text>
+            <View style={{ flex: 12, padding: 10 }}>
 
-                <Text style={{ fontSize: 12, marginTop: 5, marginBottom: 10 }}>{tweet.text}</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Icon name={'user'} type='FontAwesome' size={40} onPress={() => { }} />
 
-                {tweet.image &&
-                    <View>
-                        <Image source={{ uri: tweet.image }} style={{ width: '100%', height: 150 }} resizeMode='cover' />
-                    </View>
-                }
-
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 100, marginTop: 10 }}>
-                    {iconSection(true, 'comment', comment, () => { })}
-                    {iconSection(true, 'retweet', retweet, () => { })}
-                    {iconSection(true, 'heart', fav, () => {
-
-                    })}
-                    {iconSection(false, 'share-square', [])}
+                    <Input
+                        placeholder='Neler oluyor?'
+                        style={{ flex: 1, height: 50, padding: 10, borderBottomWidth: 0 }}
+                        value={tweet}
+                        maxLength={140}
+                        onChangeText={(tweet) => setTweet(tweet)}
+                        autoFocus
+                        multiline
+                    />
                 </View>
+                {image &&
+                        <View style={{ alignItems: 'center'}}>
+                            <Image
+                                source={{ uri: image }}
+                                style={{ width: '90%', height: '50%' }}
+                                resizeMode='cover'
+                            />
+                        </View>
+
+                    }
+
             </View>
 
-        </TouchableOpacity>
+            <Animated.View
+                style={
+                    [{
+                        flex: 0.6,
+                        backgroundColor: '#edeeef',
+                        borderTopColor: '#b7b7b7',
+                        borderTopWidth: 0.3,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        padding: 10,
+                        justifyContent: 'space-between'
+                    },
+                    {
+                        transform: [
+                            {
+                                translateY: animation,
+                            }
+                        ]
+                    }
+                    ]
+                }>
+                <Icon onPress={() => selectImage()} name='image' type='FontAwesome' style={{ color: colors.main }} />
+            </Animated.View>
+
+        </SafeAreaView>
     )
 }
 
 
-const mapStateToProps = ({ authResponse }) => {
+const mapStateToProps = ({ authResponse, tweetResponse }) => {
     const { user } = authResponse;
-    return { user };
+    return { user, loading: tweetResponse.loading };
 };
 
-export default connect(mapStateToProps, {})(TweetItems);
+export default connect(mapStateToProps, { addTweet })(AddTweet);

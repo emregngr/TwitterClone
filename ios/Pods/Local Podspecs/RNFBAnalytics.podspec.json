@@ -23,7 +23,7 @@
 
     ],
     "Firebase/Analytics": [
-      "~> 6.28.1"
+      "~> 6.30.0"
     ]
   },
   "static_framework": false

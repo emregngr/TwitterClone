@@ -8,5 +8,5 @@ export default combineReducers({
     authResponse: AuthReducers,
     charactersResponse: ListReducers,
     tweetResponse: TweetRerducers,
-    messagesResponse: MessagesReducers
+    messageResponse: MessagesReducers
 });

@@ -3,6 +3,8 @@ import { Text, View, TouchableOpacity, Image} from 'react-native';
 import * as RootNavigation from '../../rootnavigation';
 import { connect } from 'react-redux';
 
+
+
 const MessageItems = (props) => {
 
     console.log('Gelen data: ', props.data);

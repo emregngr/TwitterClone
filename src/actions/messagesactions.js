@@ -90,7 +90,7 @@ export const addMessages = (path,params) => {
             .collection('Messages').doc(path).collection('items')
             .add(params)
             .then((data) => {
-                console.log('MEssage send!', data);
+                console.log('Message send!', data);
                 dispatch({ type: ADD_MESSAGES_SUCCESS })
 
             }).catch(() => {

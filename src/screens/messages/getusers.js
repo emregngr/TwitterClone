@@ -61,8 +61,8 @@ const styles = {
 
 
 
-const mapStateToProps = ({ messagesResponse, authResponse }) => {
-    const { loadingUsers, allUsers } = messagesResponse;
+const mapStateToProps = ({ messageResponse, authResponse }) => {
+    const { loadingUsers, allUsers } = messageResponse;
     return { loadingUsers, allUsers, user: authResponse.user };
 };
 

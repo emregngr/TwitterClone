@@ -18,6 +18,7 @@ const Menu = (props) => {
 
     }
 
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={{ flex: 2, padding: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
