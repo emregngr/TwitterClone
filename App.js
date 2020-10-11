@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import Router from './src/Router';
+import Router from './src/router';
 import SplashScreen from 'react-native-splash-screen'
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';

@@ -28,7 +28,7 @@ import NotificationsDetail from './screens/notifications/notificationsdetail'
 
 
 import MessagesScreen from './screens/messages/messages'
-import MessageDetail from './screens/messages/messageDetail'
+import MessageDetail from './screens/messages/messagesdetail'
 import GetUsers from './screens/messages/getusers'
 
 
